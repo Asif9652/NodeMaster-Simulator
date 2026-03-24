@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Node Management - Simulator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: "Space Grotesk", sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .status-pulse {
+            position: relative;
+        }
+        .status-pulse::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: currentColor;
+            border-radius: 50%;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Header -->
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10">
+<div class="flex items-center p-4 justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-2xl">account_tree</span>
+<h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Nodes</h1>
+</div>
+<button class="flex items-center justify-center rounded-full w-10 h-10 bg-primary text-background-dark">
+<span class="material-symbols-outlined font-bold">add</span>
+</button>
+</div>
+<!-- Search and Global Stats -->
+<div class="px-4 pb-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary/60 group-focus-within:text-primary">search</span>
+<input class="w-full bg-primary/5 border border-primary/20 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none text-slate-100" placeholder="Search system nodes..." type="text"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto px-4 py-2 space-y-6">
+<!-- Dashboard Summary Grid -->
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-primary/5 border border-primary/10 rounded-xl p-4">
+<p class="text-xs uppercase tracking-wider text-primary/60 font-semibold mb-1">Active Nodes</p>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-bold">128</span>
+<span class="text-primary text-xs font-medium mb-1">+2%</span>
+</div>
+</div>
+<div class="bg-primary/5 border border-primary/10 rounded-xl p-4">
+<p class="text-xs uppercase tracking-wider text-primary/60 font-semibold mb-1">Total Load</p>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-bold">42%</span>
+<span class="text-orange-400 text-xs font-medium mb-1">+5%</span>
+</div>
+</div>
+</div>
+<!-- Filters Horizontal Scroll -->
+<div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-primary text-background-dark text-sm font-bold">All Nodes</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-slate-100 text-sm font-medium">Critical</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-slate-100 text-sm font-medium">Idle</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-slate-100 text-sm font-medium">Maintenance</button>
+</div>
+<!-- Node List Container -->
+<div class="space-y-4">
+<h2 class="text-sm font-bold uppercase tracking-widest text-primary/40 flex items-center gap-2">
+<span class="h-[1px] flex-1 bg-primary/20"></span>
+                Active Systems
+                <span class="h-[1px] flex-1 bg-primary/20"></span>
+</h2>
+<!-- Node Item 1 -->
+<div class="bg-primary/5 border-l-4 border-l-primary border-y border-r border-primary/10 rounded-lg p-4 relative overflow-hidden">
+<div class="flex justify-between items-start mb-3">
+<div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<h3 class="font-bold text-lg">US-EAST-01</h3>
+</div>
+<p class="text-xs text-primary/60 font-mono uppercase">ID: 4f92-x881-zm01</p>
+</div>
+<div class="flex gap-2">
+<button class="p-1.5 text-primary/60 hover:text-primary"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="p-1.5 text-red-400/60 hover:text-red-400"><span class="material-symbols-outlined text-lg">delete</span></button>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<div class="text-center p-2 rounded bg-background-dark/50">
+<p class="text-[10px] uppercase text-primary/40 font-bold">Uptime</p>
+<p class="text-sm font-medium">14d 6h</p>
+</div>
+<div class="text-center p-2 rounded bg-background-dark/50 border border-primary/20">
+<p class="text-[10px] uppercase text-primary/40 font-bold">Avg Load</p>
+<p class="text-sm font-bold text-primary">68%</p>
+</div>
+<div class="text-center p-2 rounded bg-background-dark/50">
+<p class="text-[10px] uppercase text-primary/40 font-bold">Processes</p>
+<p class="text-sm font-medium">1,024</p>
+</div>
+</div>
+<!-- Load Bar -->
+<div class="mt-3 w-full bg-primary/10 h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[68%]"></div>
+</div>
+</div>
+<!-- Node Item 2 -->
+<div class="bg-primary/5 border-l-4 border-l-orange-400 border-y border-r border-primary/10 rounded-lg p-4 relative">
+<div class="flex justify-between items-start mb-3">
+<div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-orange-400"></span>
+<h3 class="font-bold text-lg">EU-WEST-04</h3>
+</div>
+<p class="text-xs text-primary/60 font-mono uppercase">ID: 7v21-k911-pl09</p>
+</div>
+<div class="flex gap-2">
+<button class="p-1.5 text-primary/60 hover:text-primary"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="p-1.5 text-red-400/60 hover:text-red-400"><span class="material-symbols-outlined text-lg">delete</span></button>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<div class="text-center p-2 rounded bg-background-dark/50">
+<p class="text-[10px] uppercase text-primary/40 font-bold">Uptime</p>
+<p class="text-sm font-medium">2d 1h</p>
+</div>
+<div class="text-center p-2 rounded bg-background-dark/50 border border-orange-400/40">
+<p class="text-[10px] uppercase text-primary/40 font-bold">Avg Load</p>
+<p class="text-sm font-bold text-orange-400">92%</p>
+</div>
+<div class="text-center p-2 rounded bg-background-dark/50">
+<p class="text-[10px] uppercase text-primary/40 font-bold">Processes</p>
+<p class="text-sm font-medium">3,412</p>
+</div>
+</div>
+<!-- Load Bar -->
+<div class="mt-3 w-full bg-primary/10 h-1 rounded-full overflow-hidden">
+<div class="bg-orange-400 h-full w-[92%]"></div>
+</div>
+</div>
+<!-- Node Item 3 -->
+<div class="bg-primary/5 border-l-4 border-l-slate-500 border-y border-r border-primary/10 rounded-lg p-4 opacity-75">
+<div class="flex justify-between items-start mb-3">
+<div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-slate-500"></span>
+<h3 class="font-bold text-lg">ASIA-SOUTH-12</h3>
+</div>
+<p class="text-xs text-primary/60 font-mono uppercase">ID: 1m09-a112-qq05</p>
+</div>
+<div class="flex gap-2">
+<button class="p-1.5 text-primary/60 hover:text-primary"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="p-1.5 text-red-400/60 hover:text-red-400"><span class="material-symbols-outlined text-lg">delete</span></button>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<div class="text-center p-2 rounded bg-background-dark/50">
+<p class="text-[10px] uppercase text-primary/40 font-bold">Uptime</p>
+<p class="text-sm font-medium">0s</p>
+</div>
+<div class="text-center p-2 rounded bg-background-dark/50">
+<p class="text-[10px] uppercase text-primary/40 font-bold">Avg Load</p>
+<p class="text-sm font-bold text-slate-500">0%</p>
+</div>
+<div class="text-center p-2 rounded bg-background-dark/50">
+<p class="text-[10px] uppercase text-primary/40 font-bold">Processes</p>
+<p class="text-sm font-medium">0</p>
+</div>
+</div>
+<div class="mt-3 flex items-center justify-center py-1 bg-slate-500/10 rounded">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Idle / Standby Mode</p>
+</div>
+</div>
+</div>
+<!-- Simulation Graph Visualization Placeholder -->
+<div class="bg-background-dark border border-primary/10 rounded-xl p-4 overflow-hidden relative min-h-[160px]">
+<div class="absolute inset-0 opacity-20 pointer-events-none">
+<div class="w-full h-full bg-[linear-gradient(to_right,#13ec5b22_1px,transparent_1px),linear-gradient(to_bottom,#13ec5b22_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+</div>
+<div class="relative z-10">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">monitoring</span>
+                        Real-time Load Balancing
+                    </h3>
+<span class="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded font-mono">LIVE</span>
+</div>
+<div class="flex items-end justify-between h-20 gap-1 px-2">
+<div class="w-full bg-primary/40 h-[30%] rounded-t-sm"></div>
+<div class="w-full bg-primary/40 h-[45%] rounded-t-sm"></div>
+<div class="w-full bg-primary h-[85%] rounded-t-sm"></div>
+<div class="w-full bg-primary/40 h-[60%] rounded-t-sm"></div>
+<div class="w-full bg-primary/40 h-[40%] rounded-t-sm"></div>
+<div class="w-full bg-primary h-[95%] rounded-t-sm shadow-[0_0_15px_rgba(19,236,91,0.5)]"></div>
+<div class="w-full bg-primary/40 h-[70%] rounded-t-sm"></div>
+<div class="w-full bg-primary/40 h-[50%] rounded-t-sm"></div>
+<div class="w-full bg-primary/40 h-[40%] rounded-t-sm"></div>
+<div class="w-full bg-primary h-[80%] rounded-t-sm"></div>
+</div>
+<div class="flex justify-between mt-2 text-[8px] text-primary/40 font-mono px-1">
+<span>T-30S</span>
+<span>T-15S</span>
+<span>NOW</span>
+</div>
+</div>
+</div>
+<div class="h-10"></div>
+</main>
+<!-- Navigation Bar -->
+<nav class="sticky bottom-0 bg-background-dark border-t border-primary/10 pb-6 pt-2">
+<div class="flex gap-2 px-4">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary/50" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<p class="text-[10px] font-medium tracking-wide">Dash</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined">dns</span>
+<p class="text-[10px] font-medium tracking-wide">Nodes</p>
+<div class="w-1 h-1 rounded-full bg-primary"></div>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary/50" href="#">
+<span class="material-symbols-outlined">hub</span>
+<p class="text-[10px] font-medium tracking-wide">Flow</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary/50" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-[10px] font-medium tracking-wide">Config</p>
+</a>
+</div>
+</nav>
+</body></html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Process Management - Distributed Simulator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen pb-24">
+<!-- Header -->
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10">
+<div class="flex items-center p-4 justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">arrow_back_ios</span>
+<h1 class="text-xl font-bold tracking-tight">Process Manager</h1>
+</div>
+<div class="flex gap-4">
+<button class="material-symbols-outlined text-primary">search</button>
+<button class="material-symbols-outlined text-primary">tune</button>
+</div>
+</div>
+</header>
+<!-- System Stats Summary -->
+<div class="p-4">
+<div class="flex overflow-x-auto gap-4 no-scrollbar pb-2">
+<div class="flex min-w-[140px] flex-1 flex-col gap-1 rounded-xl p-4 border border-primary/20 bg-primary/5">
+<p class="text-slate-500 dark:text-primary/60 text-xs font-medium uppercase tracking-wider">Total CPU</p>
+<p class="text-2xl font-bold">74%</p>
+<div class="w-full bg-primary/10 h-1 rounded-full mt-2">
+<div class="bg-primary h-1 rounded-full w-[74%]"></div>
+</div>
+</div>
+<div class="flex min-w-[140px] flex-1 flex-col gap-1 rounded-xl p-4 border border-primary/20 bg-primary/5">
+<p class="text-slate-500 dark:text-primary/60 text-xs font-medium uppercase tracking-wider">Active Nodes</p>
+<p class="text-2xl font-bold">12<span class="text-sm font-normal text-slate-400">/15</span></p>
+<p class="text-[10px] text-primary/80 font-medium">+2 Scaling up</p>
+</div>
+<div class="flex min-w-[140px] flex-1 flex-col gap-1 rounded-xl p-4 border border-primary/20 bg-primary/5">
+<p class="text-slate-500 dark:text-primary/60 text-xs font-medium uppercase tracking-wider">Latency</p>
+<p class="text-2xl font-bold">42<span class="text-sm font-normal text-slate-400">ms</span></p>
+<p class="text-[10px] text-primary/80 font-medium">Stable</p>
+</div>
+</div>
+</div>
+<!-- Create Process Form -->
+<section class="p-4 mx-4 mb-6 rounded-2xl bg-primary/10 border border-primary/20">
+<h3 class="text-sm font-bold text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">add_circle</span>
+            Deploy New Process
+        </h3>
+<div class="space-y-4">
+<div>
+<label class="text-xs font-medium text-slate-400 mb-2 block">RESOURCE INTENSITY (CPU/MEM)</label>
+<input class="w-full h-2 bg-primary/20 rounded-lg appearance-none cursor-pointer accent-primary" max="100" min="0" type="range" value="45"/>
+<div class="flex justify-between text-[10px] mt-1 text-primary/60">
+<span>MINIMAL</span>
+<span>450 MHz</span>
+<span>CRITICAL</span>
+</div>
+</div>
+<div class="flex gap-2">
+<input class="flex-1 bg-background-light dark:bg-background-dark border border-primary/30 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-primary" placeholder="Process identifier..." type="text"/>
+<button class="bg-primary text-background-dark font-bold px-6 py-2 rounded-lg text-sm">SPAWN</button>
+</div>
+</div>
+</section>
+<!-- Active Processes List -->
+<div class="px-4">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold">Running Instances</h3>
+<span class="text-xs text-primary bg-primary/10 px-2 py-1 rounded-full border border-primary/30">Auto-balancing: ON</span>
+</div>
+<div class="space-y-3">
+<!-- Process Item 1 -->
+<div class="flex flex-col gap-3 bg-background-light dark:bg-slate-800/20 p-4 rounded-xl border border-primary/10">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="size-10 flex items-center justify-center rounded-lg bg-primary/20 text-primary">
+<span class="material-symbols-outlined">memory</span>
+</div>
+<div>
+<p class="text-sm font-bold">Worker_PID_8821</p>
+<p class="text-[10px] text-slate-500 dark:text-primary/60">NODE: Alpha-West | CPU: 450MHz</p>
+</div>
+</div>
+<button class="bg-primary/10 text-primary text-xs font-bold px-4 py-1.5 rounded-full border border-primary/30 flex items-center gap-1">
+                        MOVE <span class="material-symbols-outlined text-xs">swap_horiz</span>
+</button>
+</div>
+<div class="w-full bg-slate-200 dark:bg-slate-700 h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[45%]"></div>
+</div>
+</div>
+<!-- Process Item 2 -->
+<div class="flex flex-col gap-3 bg-background-light dark:bg-slate-800/20 p-4 rounded-xl border border-primary/10">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="size-10 flex items-center justify-center rounded-lg bg-orange-500/20 text-orange-400">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<div>
+<p class="text-sm font-bold">DataSync_X9</p>
+<p class="text-[10px] text-slate-500 dark:text-primary/60">NODE: Bravo-South | CPU: 1.2GHz</p>
+</div>
+</div>
+<button class="bg-primary/10 text-primary text-xs font-bold px-4 py-1.5 rounded-full border border-primary/30 flex items-center gap-1">
+                        MOVE <span class="material-symbols-outlined text-xs">swap_horiz</span>
+</button>
+</div>
+<div class="w-full bg-slate-200 dark:bg-slate-700 h-1 rounded-full overflow-hidden">
+<div class="bg-orange-500 h-full w-[82%]"></div>
+</div>
+</div>
+<!-- Process Item 3 -->
+<div class="flex flex-col gap-3 bg-background-light dark:bg-slate-800/20 p-4 rounded-xl border border-primary/10">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="size-10 flex items-center justify-center rounded-lg bg-primary/20 text-primary">
+<span class="material-symbols-outlined">terminal</span>
+</div>
+<div>
+<p class="text-sm font-bold">Kernel_Daemon_0</p>
+<p class="text-[10px] text-slate-500 dark:text-primary/60">NODE: Alpha-West | CPU: 120MHz</p>
+</div>
+</div>
+<button class="bg-primary/10 text-primary text-xs font-bold px-4 py-1.5 rounded-full border border-primary/30 flex items-center gap-1">
+                        MOVE <span class="material-symbols-outlined text-xs">swap_horiz</span>
+</button>
+</div>
+<div class="w-full bg-slate-200 dark:bg-slate-700 h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[12%]"></div>
+</div>
+</div>
+<!-- Process Item 4 -->
+<div class="flex flex-col gap-3 bg-background-light dark:bg-slate-800/20 p-4 rounded-xl border border-primary/10">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="size-10 flex items-center justify-center rounded-lg bg-primary/20 text-primary">
+<span class="material-symbols-outlined">dns</span>
+</div>
+<div>
+<p class="text-sm font-bold">StreamHandler_B</p>
+<p class="text-[10px] text-slate-500 dark:text-primary/60">NODE: Delta-North | CPU: 800MHz</p>
+</div>
+</div>
+<button class="bg-primary/10 text-primary text-xs font-bold px-4 py-1.5 rounded-full border border-primary/30 flex items-center gap-1">
+                        MOVE <span class="material-symbols-outlined text-xs">swap_horiz</span>
+</button>
+</div>
+<div class="w-full bg-slate-200 dark:bg-slate-700 h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[60%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Nav Bar -->
+<nav class="fixed bottom-0 left-0 right-0 border-t border-primary/10 bg-background-light dark:bg-background-dark/95 backdrop-blur-lg px-4 pb-6 pt-2 z-50">
+<div class="flex gap-2 max-w-lg mx-auto">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-[10px] font-medium leading-normal tracking-wide">Dash</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">dns</span>
+<p class="text-[10px] font-medium leading-normal tracking-wide">Nodes</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-primary" href="#">
+<span class="material-symbols-outlined fill-[1]">memory</span>
+<p class="text-[10px] font-medium leading-normal tracking-wide">Processes</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">list_alt</span>
+<p class="text-[10px] font-medium leading-normal tracking-wide">Logs</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-[10px] font-medium leading-normal tracking-wide">Config</p>
+</a>
+</div>
+</nav>
+<!-- Modal Metaphor (Simple Overlay Example) -->
+<!-- This is hidden by default but visually structured for the 'Move' action -->
+<div class="hidden fixed inset-0 bg-background-dark/80 backdrop-blur-sm z-[100] items-end">
+<div class="w-full bg-background-dark border-t border-primary/20 rounded-t-3xl p-6 animate-slide-up">
+<div class="w-12 h-1 bg-slate-700 rounded-full mx-auto mb-6"></div>
+<h2 class="text-xl font-bold mb-4">Migrate Process</h2>
+<p class="text-sm text-slate-400 mb-6">Select a destination node for <span class="text-primary font-bold">Worker_PID_8821</span></p>
+<div class="space-y-3 mb-8">
+<div class="p-4 rounded-xl border border-primary/40 bg-primary/5 flex justify-between items-center">
+<div>
+<p class="font-bold">Alpha-West</p>
+<p class="text-[10px] text-primary/60">CURRENT LOCATION | 42% LOAD</p>
+</div>
+<span class="material-symbols-outlined text-primary">check_circle</span>
+</div>
+<div class="p-4 rounded-xl border border-slate-700 bg-slate-800/40 flex justify-between items-center">
+<div>
+<p class="font-bold">Bravo-South</p>
+<p class="text-[10px] text-slate-500">OPTIMAL | 21% LOAD</p>
+</div>
+<span class="material-symbols-outlined text-slate-600">circle</span>
+</div>
+<div class="p-4 rounded-xl border border-slate-700 bg-slate-800/40 flex justify-between items-center">
+<div>
+<p class="font-bold">Delta-North</p>
+<p class="text-[10px] text-slate-500">HEAVY LOAD | 88% LOAD</p>
+</div>
+<span class="material-symbols-outlined text-slate-600">circle</span>
+</div>
+</div>
+<button class="w-full bg-primary text-background-dark font-bold py-4 rounded-xl mb-2">INITIATE MIGRATION</button>
+<button class="w-full py-4 text-slate-400 font-medium">CANCEL</button>
+</div>
+</div>
+</body></html>

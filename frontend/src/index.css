@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .glass-card, .glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .node-glow-overload {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+  }
+  .hero-gradient {
+    background: radial-gradient(circle at top right, rgba(124, 58, 237, 0.15), transparent),
+                radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.15), transparent);
+  }
+}
+
+body {
+    min-height: max(884px, 100dvh);
+}
