@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { socket } from '../services/socket';
+import { socket, URL } from '../services/socket';
 import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
 
 // Global variable to hold history so it doesn't wipe when changing tabs
@@ -13,7 +13,7 @@ const Monitor = () => {
 
     const fetchMigrations = async () => {
         try {
-            const res = await fetch('/api/metrics/migrations');
+            const res = await fetch(`${URL}/api/metrics/migrations`);
             const data = await res.json();
             if (Array.isArray(data)) {
                 setMigrations(data);

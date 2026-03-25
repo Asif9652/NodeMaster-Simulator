@@ -12,12 +12,13 @@ const n2 = uuidv4();
 const n3 = uuidv4();
 const n4 = uuidv4();
 
+// IN-MEMORY DATABASE (MOCK)
 const db = {
     nodes: [
-        { id: n1, name: 'ALPHA-01', region: 'us-east-1', status: 'Operational', cpu_load: 0, created_at: new Date().toISOString() },
-        { id: n2, name: 'BETA-02', region: 'eu-central-1', status: 'Operational', cpu_load: 0, created_at: new Date().toISOString() },
-        { id: n3, name: 'GAMMA-03', region: 'ap-south-1', status: 'Operational', cpu_load: 0, created_at: new Date().toISOString() },
-        { id: n4, name: 'DELTA-04', region: 'us-west-2', status: 'Operational', cpu_load: 0, created_at: new Date().toISOString() }
+        { id: n1, name: 'ALPHA-01', region: 'us-east-1', status: 'Operational', load: 0, created_at: new Date().toISOString() },
+        { id: n2, name: 'BETA-02', region: 'eu-central-1', status: 'Operational', load: 0, created_at: new Date().toISOString() },
+        { id: n3, name: 'GAMMA-03', region: 'ap-south-1', status: 'Operational', load: 0, created_at: new Date().toISOString() },
+        { id: n4, name: 'DELTA-04', region: 'us-west-2', status: 'Operational', load: 0, created_at: new Date().toISOString() }
     ],
     processes: [
         { id: uuidv4(), process_name: 'Kernel_Daemon', cpu_usage: 15, memory_usage: 40, node_id: n1, status: 'Running', created_at: new Date().toISOString() },
@@ -30,14 +31,17 @@ const db = {
 };
 
 const createMockSupabase = () => {
-    console.log('No SUPABASE_URL found in .env, using local memory database fallback.');
+    console.log('--- ☁️ PRESENTATION MODE ACTIVE (Mock Database) ☁️ ---');
     return {
         from: (table) => ({
             select: (query) => {
-                let result = [...db[table]];
+                let result = [...(db[table] || [])];
                 return {
                     order: (col, { ascending }) => {
-                        result.sort((a, b) => ascending ? new Date(a[col]).getTime() - new Date(b[col]).getTime() : new Date(b[col]).getTime() - new Date(a[col]).getTime());
+                        result.sort((a, b) => ascending 
+                            ? new Date(a[col]).getTime() - new Date(b[col]).getTime() 
+                            : new Date(b[col]).getTime() - new Date(a[col]).getTime()
+                        );
                         return {
                             limit: (n) => Promise.resolve({ data: result.slice(0, n), error: null }),
                             then: (res) => res({ data: result, error: null })
@@ -51,13 +55,13 @@ const createMockSupabase = () => {
                         };
                     },
                     then: (res) => {
-                        // For joined selects in metrics.js
-                        if (query && query.includes('processes')) {
+                        // For joined selects in metrics.js (simulating relationships)
+                        if (query && query.includes('source')) {
                             result = result.map(m => ({
                                 ...m,
-                                processes: db.processes.find(p => p.id === m.process_id),
-                                source: db.nodes.find(n => n.id === m.source_node),
-                                target: db.nodes.find(n => n.id === m.target_node)
+                                process_name: db.processes.find(p => p.id === m.process_id)?.process_name || 'System Task',
+                                source_name: db.nodes.find(n => n.id === m.source_node)?.name || 'Unknown Node',
+                                target_name: db.nodes.find(n => n.id === m.target_node)?.name || 'Unknown Node'
                             }));
                         }
                         return res({ data: result, error: null });
@@ -68,7 +72,6 @@ const createMockSupabase = () => {
                 const newItems = items.map(item => ({
                     id: uuidv4(),
                     created_at: new Date().toISOString(),
-                    timestamp: new Date().toISOString(),
                     ...item
                 }));
                 db[table].push(...newItems);
@@ -103,6 +106,10 @@ const createMockSupabase = () => {
     };
 };
 
-const isRealSupabase = supabaseUrl && supabaseUrl.trim() !== '';
+// FORCE MOCK DATABASE FOR STABILITY DURING PRESENTATION
+// Only use real Supabase if explicitly requested in ENV
+const useRealSupabase = process.env.USE_REAL_SUPABASE === 'true';
 
-export const supabase = isRealSupabase ? createClient(supabaseUrl, supabaseKey) : createMockSupabase();
+export const supabase = (useRealSupabase && supabaseUrl) 
+    ? createClient(supabaseUrl, supabaseKey) 
+    : createMockSupabase();

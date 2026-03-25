@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { socket } from '../services/socket';
+import { socket, URL } from '../services/socket';
 
 const Processes = () => {
     const [nodes, setNodes] = useState([]);
@@ -14,15 +14,17 @@ const Processes = () => {
     const fetchData = async () => {
         try {
             const [nodesRes, procsRes] = await Promise.all([
-                fetch('/api/nodes'),
-                fetch('/api/processes')
+                fetch(`${URL}/api/nodes`),
+                fetch(`${URL}/api/processes`)
             ]);
             const nData = await nodesRes.json();
             const pData = await procsRes.json();
-            setNodes(nData);
-            setProcesses(pData);
+            setNodes(Array.isArray(nData) ? nData : []);
+            setProcesses(Array.isArray(pData) ? pData : []);
         } catch (err) {
             console.error(err);
+            setNodes([]);
+            setProcesses([]);
         }
     };
 
@@ -76,7 +78,7 @@ const Processes = () => {
         if (availableNodes.length === 0) return alert('No device has enough capacity');
         const target = availableNodes.reduce((min, n) => (n.load || 0) < (min.load || 0) ? n : min, availableNodes[0]);
 
-        await fetch('/api/processes', {
+        await fetch(`${URL}/api/processes`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -92,7 +94,7 @@ const Processes = () => {
 
     const handleMigrate = async () => {
         if (!selectedProcess || !targetNodeId) return;
-        await fetch('/api/processes/migrate', {
+        await fetch(`${URL}/api/processes/migrate`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

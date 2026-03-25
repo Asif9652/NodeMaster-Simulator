@@ -38,7 +38,7 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => console.log('Client disconnected:', socket.id));
 });
 
-const PORT = 5004;
+const PORT = process.env.PORT || 5004;
 httpServer.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
     startMigrationEngine(io);

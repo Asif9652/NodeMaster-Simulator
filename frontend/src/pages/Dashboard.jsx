@@ -1,11 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { socket } from '../services/socket';
+import { socket, URL } from '../services/socket';
 
 const Dashboard = () => {
     const [nodes, setNodes] = useState([]);
     const [metrics, setMetrics] = useState({ activeNodes: 0, clusterLoad: 0 });
 
     useEffect(() => {
+        const fetchInitial = async () => {
+            try {
+                const res = await fetch(`${URL}/api/nodes`);
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    setNodes(data);
+                    const load = data.length > 0 ? Math.round(data.reduce((sum, n) => sum + n.load, 0) / data.length) : 0;
+                    setMetrics({ activeNodes: data.length, clusterLoad: load });
+                }
+            } catch (err) { console.error(err); }
+        };
+        fetchInitial();
+
         // Listen for cluster updates
         socket.on('cluster_metrics_update', (data) => {
             if (!Array.isArray(data)) return;
@@ -34,8 +47,8 @@ const Dashboard = () => {
                     <p className="text-slate-400 text-xs uppercase tracking-wider font-semibold">System Load</p>
                     <div className="flex items-end justify-between mt-1">
                         <span className="text-2xl font-bold">{metrics.clusterLoad}%</span>
-                        <span className={`${metrics.clusterLoad > 85 ? 'text-red-400' : 'text-primary'} text-xs flex items-center gap-1 font-medium`}>
-                            <span className="material-symbols-outlined text-sm">{metrics.clusterLoad > 85 ? 'warning' : 'check_circle'}</span>
+                        <span className={`${metrics.clusterLoad > 60 ? 'text-red-400' : 'text-primary'} text-xs flex items-center gap-1 font-medium`}>
+                            <span className="material-symbols-outlined text-sm">{metrics.clusterLoad > 60 ? 'warning' : 'check_circle'}</span>
                         </span>
                     </div>
                 </div>
@@ -61,7 +74,7 @@ const Dashboard = () => {
 };
 
 const NodeCard = ({ node }) => {
-    const isOverloaded = node.load > 85;
+    const isOverloaded = node.load > 60;
 
     return (
         <div className={`glass p-4 rounded-xl flex flex-col gap-4 border-l-4 shadow-lg transition-all ${isOverloaded ? 'border-l-red-500 node-glow-overload shadow-xl relative overflow-hidden' : 'border-l-primary'}`}>

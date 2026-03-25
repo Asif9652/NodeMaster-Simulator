@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { socket } from '../services/socket';
+import { socket, URL } from '../services/socket';
 
 const Nodes = () => {
     const [nodes, setNodes] = useState([]);
@@ -8,7 +8,7 @@ const Nodes = () => {
 
     const fetchNodes = async () => {
         try {
-            const res = await fetch('/api/nodes');
+            const res = await fetch(`${URL}/api/nodes`);
             const data = await res.json();
             if (Array.isArray(data)) {
                 setNodes(data);
@@ -51,12 +51,12 @@ const Nodes = () => {
     }, []);
 
     const handleCreateNode = async () => {
-        await fetch('/api/nodes', { method: 'POST' });
+        await fetch(`${URL}/api/nodes`, { method: 'POST' });
         fetchNodes();
     };
 
     const handleDeleteNode = async (id) => {
-        await fetch(`/api/nodes/${id}`, { method: 'DELETE' });
+        await fetch(`${URL}/api/nodes/${id}`, { method: 'DELETE' });
         fetchNodes();
     };
 
@@ -121,7 +121,7 @@ const Nodes = () => {
 
                     <div className="relative z-10 flex flex-wrap justify-center items-center gap-6 sm:gap-10 w-full pt-4 pb-10">
                         {nodes.map((node, i) => {
-                            const isOverloaded = node.load > 85;
+                            const isOverloaded = node.load > 60;
                             const isMigrating = migrations.some(m => m.source_node === node.id || m.target_node === node.id);
 
                             return (
@@ -130,8 +130,8 @@ const Nodes = () => {
                                     <div className={`absolute -top-6 w-[2px] h-6 ${isOverloaded ? 'bg-red-500 box-shadow-[0_0_10px_rgba(239,68,68,0.8)]' : isMigrating ? 'bg-cyan-400 box-shadow-[0_0_10px_rgba(6,182,212,0.8)] animate-pulse' : 'bg-primary/40'}`}></div>
 
                                     {/* Computer Icon */}
-                                    <div className={`relative w-16 h-16 rounded-xl flex items-center justify-center border-2 transition-all duration-300 ${isOverloaded ? 'bg-red-500/10 border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.3)] animate-bounce' : 'bg-background-dark border-primary shadow-[0_0_15px_rgba(19,236,91,0.2)]'}`}>
-                                        <span className={`material-symbols-outlined text-4xl ${isOverloaded ? 'text-red-500' : 'text-primary'}`}>dns</span>
+                                    <div className={`relative w-16 h-16 rounded-xl flex items-center justify-center border-2 transition-all duration-300 ${isOverloaded ? 'bg-red-900/30 border-red-500 shadow-[0_0_25px_rgba(239,68,68,0.6)] animate-bounce scale-110' : 'bg-background-dark border-primary shadow-[0_0:15px_rgba(19,236,91,0.2)]'}`}>
+                                        <span className={`material-symbols-outlined text-4xl ${isOverloaded ? 'text-red-500 animate-pulse' : 'text-primary'}`}>dns</span>
 
                                         {/* Load Badge overlapping the icon */}
                                         <div className={`absolute -bottom-3 px-2 py-0.5 rounded text-[10px] font-bold border ${isOverloaded ? 'bg-red-900 border-red-500 text-red-100' : 'bg-primary/20 border-primary text-primary'}`}>

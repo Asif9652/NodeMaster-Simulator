@@ -12,7 +12,7 @@ export const getNodes = async (req, res) => {
     if (processes && nodes) {
         nodes.forEach(node => {
             const nodeProcs = processes.filter(p => p.node_id === node.id);
-            node.cpu_load = Math.min(100, nodeProcs.reduce((sum, p) => sum + p.cpu_usage, 0));
+            node.load = Math.min(100, nodeProcs.reduce((sum, p) => sum + p.cpu_usage, 0));
         });
     }
 
@@ -23,8 +23,10 @@ export const createNode = async (req, res) => {
     const regions = ['us-east-1', 'eu-central-1', 'ap-south-1', 'us-west-2'];
     const randomRegion = regions[Math.floor(Math.random() * regions.length)];
     const nodeName = `NODE-${Math.floor(1000 + Math.random() * 9000)}`;
-    const { data, error } = await supabase.from('nodes').insert([{ name: nodeName, region: randomRegion, cpu_load: 0, status: 'Operational' }]).select();
+    const { data, error } = await supabase.from('nodes').insert([{ name: nodeName, region: randomRegion, load: 0, status: 'Operational' }]).select();
+    
     if (error) return res.status(500).json({ error: error.message });
+    if (!data || data.length === 0) return res.status(500).json({ error: 'Failed to create node' });
 
     req.io.emit('node_created', data[0]);
     res.status(201).json(data[0]);
