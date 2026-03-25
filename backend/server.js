@@ -33,6 +33,10 @@ app.use('/api/nodes', nodeRoutes);
 app.use('/api/processes', processRoutes);
 app.use('/api/metrics', metricRoutes);
 
+app.get('/', (req, res) => {
+    res.send('<h1>🚀 NodeMaster Backend is Live</h1><p>Visit the frontend to see the simulator.</p>');
+});
+
 io.on('connection', (socket) => {
     console.log('Client connected:', socket.id);
     socket.on('disconnect', () => console.log('Client disconnected:', socket.id));
